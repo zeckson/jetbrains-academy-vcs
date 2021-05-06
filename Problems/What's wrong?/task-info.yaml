@@ -1,0 +1,16 @@
+type: code
+files:
+- name: src/Main.kt
+  visible: true
+  text: |-
+    fun main() {
+        val number: Int = readLine()!!
+        println(number.nextInt())
+    }
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/11563#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: Wed, 05 May 2021 21:45:14 UTC
+record: -1

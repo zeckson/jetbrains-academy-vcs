@@ -1,0 +1,168 @@
+type: edu
+files:
+- name: src/svcs/Main.kt
+  visible: true
+  text: |-
+    package svcs
+
+    fun main(args: Array<String>) {
+
+    }
+  learner_created: false
+- name: test/Tests.kt
+  visible: false
+  text: |+
+    import org.hyperskill.hstest.dynamic.DynamicTest
+    import org.hyperskill.hstest.exception.outcomes.WrongAnswer
+    import org.hyperskill.hstest.stage.StageTest
+    import org.hyperskill.hstest.testcase.CheckResult
+    import org.hyperskill.hstest.testing.TestedProgram
+    import java.io.File
+
+
+    class TestStage2 : StageTest<String>() {
+        @DynamicTest(order = 1)
+        fun helpPageTest(): CheckResult {
+            try {
+                checkHelpPageOutput(TestedProgram().start())
+                checkHelpPageOutput(TestedProgram().start("--help"))
+            } finally {
+                deleteVcsDir()
+            }
+            return CheckResult.correct()
+        }
+
+        @DynamicTest(order = 2)
+        fun configTest(): CheckResult {
+            try {
+                checkOutputString(TestedProgram().start("config"), "Please, tell me who you are")
+                checkOutputString(TestedProgram().start("config", "Max"), "The username is Max")
+                checkOutputString(TestedProgram().start("config"), "The username is Max")
+                checkOutputString(TestedProgram().start("config", "John"), "The username is John")
+                checkOutputString(TestedProgram().start("config"), "The username is John")
+            } finally {
+                deleteVcsDir()
+            }
+
+            return CheckResult.correct()
+        }
+
+        @DynamicTest(order = 3)
+        fun addTest(): CheckResult {
+            val file1 = File("first_file.txt")
+            val file2 = File("second_file.txt")
+            file1.createNewFile()
+            file2.createNewFile()
+
+            try {
+                checkOutputString(TestedProgram().start("add"), "Add a file to the index")
+                checkOutputString(TestedProgram().start("add", "first_file.txt"), "The File 'first_file.txt' is tracked")
+                checkOutputString(TestedProgram().start("add"), "Tracked files:\nfirst_file.txt")
+                checkOutputString(TestedProgram().start("add", "second_file.txt"), "The File 'second_file.txt' is tracked")
+                checkOutputString(TestedProgram().start("add"), "Tracked files:\nfirst_file.txt\nsecond_file.txt")
+                checkOutputString(
+                        TestedProgram().start("add", "file_is_not_exists.txt"),
+                        "Can't found 'file_is_not_exists.txt'"
+                )
+            } finally {
+                deleteVcsDir()
+                file1.delete()
+                file2.delete()
+            }
+
+            return CheckResult.correct()
+        }
+
+        @DynamicTest(order = 4)
+        fun logTest(): CheckResult {
+            try {
+                checkOutputString(TestedProgram().start("log"), "Show commit logs")
+            } finally {
+                deleteVcsDir()
+            }
+            return CheckResult.correct()
+        }
+
+        @DynamicTest(order = 5)
+        fun commitTest(): CheckResult {
+            try {
+                checkOutputString(TestedProgram().start("commit"), "Save changes")
+            } finally {
+                deleteVcsDir()
+            }
+            return CheckResult.correct()
+        }
+
+        @DynamicTest(order = 6)
+        fun checkoutTest(): CheckResult {
+            try {
+                checkOutputString(TestedProgram().start("checkout"), "Restore a file")
+            } finally {
+                deleteVcsDir()
+            }
+            return CheckResult.correct()
+        }
+
+        @DynamicTest(order = 7)
+        fun wrongArgTest(): CheckResult {
+            try {
+                checkOutputString(TestedProgram().start("wrongArg"), "'wrongArg' is not a SVCS command")
+            } finally {
+                deleteVcsDir()
+            }
+            return CheckResult.correct()
+        }
+
+        private fun prepareString(s: String) = s.trim().split(" ").filter { it.isNotBlank() }.joinToString(" ")
+
+        private fun checkHelpPageOutput(got: String) {
+            val helpPage = "These are SVCS commands:\n" +
+                    "config     Get and set a username.\n" +
+                    "add        Add a file to the index.\n" +
+                    "log        Show commit logs.\n" +
+                    "commit     Save changes.\n" +
+                    "checkout   Restore a file."
+
+            if (got.isBlank()) {
+                throw WrongAnswer(
+                        "Your program should output:\n$helpPage\n\n" +
+                                "But printed nothing"
+                )
+            } else if (!prepareString(got).contains(prepareString(helpPage), true)) {
+                throw WrongAnswer(
+                        "Your program should output:\n$helpPage\n\n" +
+                                "But printed:\n$got"
+                )
+            }
+        }
+
+        private fun checkOutputString(got: String, want: String) {
+            if (got.isBlank()) {
+                throw WrongAnswer(
+                        "Your program should output \"$want.\",\n" +
+                                "but printed nothing"
+                )
+            } else if (!got.contains(want, true)) {
+                throw WrongAnswer(
+                        "Your program should output \"$want.\",\n" +
+                                "but printed: \"$got\""
+                )
+            }
+        }
+
+        private fun deleteVcsDir() {
+            val dir = File("vcs")
+            if (dir.exists()) {
+                dir.deleteRecursively()
+            }
+        }
+
+    }
+
+  learner_created: false
+feedback_link: https://hyperskill.org/projects/177/stages/910/implement#comment
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Thu, 06 May 2021 00:52:00 UTC
+record: 2

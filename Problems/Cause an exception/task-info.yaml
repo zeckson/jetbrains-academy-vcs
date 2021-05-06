@@ -1,0 +1,15 @@
+type: code
+files:
+- name: src/Main.kt
+  visible: true
+  text: |-
+    fun main() {
+        // Write some code to cause an exception
+    }
+  learner_created: false
+- name: src/new.txt
+  visible: true
+  learner_created: true
+feedback_link: https://hyperskill.org/learn/step/7247#comment
+status: Unchecked
+record: -1
